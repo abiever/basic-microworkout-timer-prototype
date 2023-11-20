@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microworkout Timer</title>
+    <script src="script.js"></script>
+    <style src="style.css"></style>
+</head>
+<body>
+    
+    <h1>Stopwatch</h1>
+    <br/>
+    <p id="exercise-name">Exercise will go here.</p>
+    <img id="exercise-gif" src=""/>
+
+    <!--Buttons for stopwatch-->
+    <button onclick="startStopwatch()">Start</button>
+    <button onclick="stopStopwatch()">Stop</button>
+    <button onclick="resetStopwatch()">Reset</button>
+
+    <p>Set time limit:
+        <select id="timeLimit">
+            <option value="0.10">6 seconds</option> <!--just for testing purposes; get rid of later-->
+            <option value="1">1 minute</option>
+            <option value="5">5 minutes</option>
+            <option value="10">10 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+        </select>
+    </p>
+
+    <p id="stopwatch">00:00:00</p>
+
+    <audio id="beep" src="ringing.mp3"></audio>
+
+</body>
+</html>
