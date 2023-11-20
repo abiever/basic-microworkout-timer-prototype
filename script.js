@@ -1,12 +1,16 @@
+//Utilizes ExerciseDB API from here:
+//https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb
+
 let startTime;
 let stopTime;
 let running = 0;
 let timer;
 let exerciseData;
+let lastUpdateTime;
 
 //Loads API into local storage upon page load
-//document.addEventListener('DOMContentLoaded', function() {
-  let exerciseDB_URL = 'https://exercisedb.p.rapidapi.com/exercises/equipment/body%20weight?limit=400';
+document.addEventListener('DOMContentLoaded', function() {
+  let exerciseDB_URL = 'https://exercisedb.p.rapidapi.com/exercises/equipment/body%20weight?limit=330';
   const options = {
       method: 'GET',
       headers: {
@@ -15,25 +19,46 @@ let exerciseData;
       }
   }; 
   
-  //first checks if 'exerciseData' is already stored in localStorage, then parses it
+  //first checks if 'exerciseData' is already stored in localStorage, then parses it and sets update time to what was stored in local storage
   if (localStorage.getItem('exerciseData')) {
     exerciseData = JSON.parse(localStorage.getItem('exerciseData'));
+    lastUpdateTime = localStorage.getItem('lastUpdateTime');
     console.log(exerciseData);
-  } else {
-    //if it's not, we make an API call to fetch the necessary data and intialize exerciseData to it
+    console.log(lastUpdateTime);
+  } else if (!localStorage.getItem('exerciseData')) {
+    //if it's not, we make an API call to fetch the necessary data and intialize exerciseData to it, and set the time in which this happened
       try {
         fetch(exerciseDB_URL, options)
               .then(response => response.json())
               .then(response => {
                   exerciseData = response;
+                  lastUpdateTime = new Date().toISOString();
                   localStorage.setItem('exerciseData', JSON.stringify(exerciseData));
+                  localStorage.setItem('lastUpdateTime', lastUpdateTime); // Save the current time as the last update time for daily gifURL refresh
                   console.log(exerciseData);
+                  console.log(lastUpdateTime);
+              })
+      } catch (error) {
+              console.error(error);
+      }
+  //if the API data is already stored, but the GifURLs are expired (12PM Central Time), this checks for expiration then sends another API call to update URLs
+  } else if (localStorage.getItem('exerciseData') || shouldRefreshGIFs(lastUpdateTime)) {
+      try {
+        fetch(exerciseDB_URL, options)
+              .then(response => response.json())
+              .then(response => {
+                  exerciseData = response;
+                  lastUpdateTime = new Date().toISOString();
+                  localStorage.setItem('exerciseData', JSON.stringify(exerciseData));
+                  localStorage.setItem('lastUpdateTime', lastUpdateTime); // Save the current time as the last update time for daily gifURL refresh
+                  console.log(exerciseData);
+                  console.log(lastUpdateTime);
               })
       } catch (error) {
               console.error(error);
       }
   }
-//});
+});
 
 function startStopwatch() {
   if (running == 0) {
@@ -104,3 +129,14 @@ function displayRandomExercise() {
       //console.log(exerciseData.length);
 }
 
+// Function to check if it's time to refresh the GIF URLs
+function shouldRefreshGIFs(time) {
+  const now = new Date();
+  const lastUpdateDate = new Date(time);
+
+  // Check if it's past 12:00 pm (noon) Central US time
+  return (
+    now.getUTCHours() >= 17 && // Adjust UTC hours to correspond to Central US time (12 pm Central time is 17:00 UTC)
+    now.getDate() > lastUpdateDate.getDate() // Check if it's a new day since the last update
+  );
+}
