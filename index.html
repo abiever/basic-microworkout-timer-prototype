@@ -9,16 +9,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!--Format inspired by: https://codepen.io/abisai7/details/abjZYgW-->
+    <div class="wrapper">
+        <div class="container">
+            <p id="exercise-name">Exercise will go here.</p>
+            <img id="exercise-gif" src=""/>
+            <section class="time-container">
+                <p class="time" id="stopwatch">00:00:00</p>
+            </section>
+            <!--Buttons for stopwatch-->
+            <section title="actions" class="buttons">
+                <button class="btn btn-primary" id="button-start" onclick="startStopwatch()">Start</button>
+                <button onclick="stopStopwatch()">Stop</button>
+                <button class="btn btn-outline" onclick="resetStopwatch()">Reset</button>
+            </section>
+        </div>
+    </div>
     
-    <h1>Stopwatch</h1>
-    <br/>
-    <p id="exercise-name">Exercise will go here.</p>
-    <img id="exercise-gif" src=""/>
 
-    <!--Buttons for stopwatch-->
-    <button onclick="startStopwatch()">Start</button>
-    <button onclick="stopStopwatch()">Stop</button>
-    <button onclick="resetStopwatch()">Reset</button>
+    
+    
 
     <p>Set time limit:
         <select id="timeLimit">
@@ -32,7 +42,7 @@
         </select>
     </p>
 
-    <p id="stopwatch">00:00:00</p>
+    
 
     <audio id="beep" src="ringing.mp3"></audio>
 

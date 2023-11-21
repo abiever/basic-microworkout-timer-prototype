@@ -1,3 +1,30 @@
-body {
-    background: red;
-}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .time {
+    font-size: 100px;
+    font-family: 'Share Tech Mono', monospace; 
+    text-align: center;
+    padding-bottom: 40px;
+  }
+  
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+  }
+  
+  button {
+    
+  }
