@@ -7,6 +7,8 @@
     <title>Microworkout Timer</title>
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
+    <!--Below is the CDN for Bootstrap-esque automated styling-->
+    <link href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" rel="stylesheet" />
 </head>
 <body>
     <!--Format inspired by: https://codepen.io/abisai7/details/abjZYgW-->
@@ -19,9 +21,8 @@
             </section>
             <!--Buttons for stopwatch-->
             <section title="actions" class="buttons">
-                <button class="btn btn-primary" id="button-start" onclick="startStopwatch()">Start</button>
-                <button onclick="stopStopwatch()">Stop</button>
-                <button class="btn btn-outline" onclick="resetStopwatch()">Reset</button>
+                <button class="btn btn-primary" id="button-start">Start</button>
+                <button class="btn btn-outline" id="button-reset" onclick="resetStopwatch()">Reset</button>
             </section>
         </div>
     </div>

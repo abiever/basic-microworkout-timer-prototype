@@ -3,10 +3,13 @@
 
 let startTime;
 let stopTime;
-let running = 0;
+let running = false;
 let timer;
 let exerciseData;
 let lastUpdateTime;
+
+const startStopbutton = document.getElementById("button-start");
+const resetButton = document.getElementById("button-reset");
 
 //Loads API into local storage upon page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -60,52 +63,58 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function startStopwatch() {
-  if (running == 0) {
-    startTime = new Date().getTime();
-    running = 1;
-    timer = setInterval(function() {
-      let elapsedTime = new Date().getTime() - startTime;
-      let hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      let minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
-      let timeLimit = document.getElementById("timeLimit").value;
-      let audio = document.getElementById("beep");
+window.onload = function () {
+  loadInitialState();
+};
 
-      if (hours < 10) {
-        hours = "0" + hours;
-      }
-      if (minutes < 10) {
-        minutes = "0" + minutes;
-      }
-      if (seconds < 10) {
-        seconds = "0" + seconds;
-      }
-
-      document.getElementById("stopwatch").innerHTML = hours + ":" + minutes + ":" + seconds;
-
-      if (elapsedTime >= timeLimit * 60 * 1000) {
-        stopStopwatch();
-        audio.currentTime = 0;
-        audio.play();
-        displayRandomExercise();
-        //console.log(exerciseData[5].gifUrl);
-        //console.log(exerciseData.length);
-      }
-    }, 1000);
-  }
+const loadInitalState = () => {
+  startStopbutton.addEventListener("click", function() {
+    if (!running) {
+      startTime = new Date().getTime();
+      running = true;
+      startStopbutton.innerHTML = "Pause";
+      timer = setInterval(function() {
+        let elapsedTime = new Date().getTime() - startTime;
+        let hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+        let timeLimit = document.getElementById("timeLimit").value;
+        let audio = document.getElementById("beep");
+  
+        if (hours < 10) {
+          hours = "0" + hours;
+        }
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+          seconds = "0" + seconds;
+        }
+  
+        document.getElementById("stopwatch").innerHTML = hours + ":" + minutes + ":" + seconds;
+  
+        if (elapsedTime >= timeLimit * 60 * 1000) {
+          stopStopwatch();
+          audio.currentTime = 0;
+          audio.play();
+          displayRandomExercise();
+        }
+      }, 1000);
+    }
+  });
 }
 
+
+
 function stopStopwatch() {
-  //if (running == 1) { //this if statement likely isn't necessary
-    running = 0; //this statement was originally at the end of this codeblock
+  if (running === true) { //this if statement may not be necessary
+    running = false; //this statement was originally at the end of this codeblock
     let audio = document.getElementById("beep");
     clearInterval(timer);
     audio.pause()
     audio.currentTime = 0;
     stopTime = new Date().getTime();
-    
-  //}
+    }
 }
 
 function resetStopwatch() {
@@ -115,7 +124,7 @@ function resetStopwatch() {
     audio.currentTime = 0;
     startTime = null;
     stopTime = null;
-    running = 0;
+    running = false;
     document.getElementById("stopwatch").innerHTML = "00:00:00";
 }
 
