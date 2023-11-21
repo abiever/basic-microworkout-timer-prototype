@@ -1,6 +1,7 @@
 //Utilizes ExerciseDB API from here:
 //https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb
 
+//declare all globally used variables here
 let startTime;
 let stopTime;
 let running = false;
@@ -8,11 +9,16 @@ let timer;
 let exerciseData;
 let lastUpdateTime;
 
-const startStopbutton = document.getElementById("button-start");
-const resetButton = document.getElementById("button-reset");
+let startStopbutton;
+let resetButton;
 
 //Loads API into local storage upon page load
 document.addEventListener('DOMContentLoaded', function() {
+  //Having the buttons' HTML id gets here ensures they are initialized prior to Javascript functions using them
+  startStopbutton = document.getElementById("button-start");
+  resetButton = document.getElementById("button-reset");
+
+  //Prepares the API call
   let exerciseDB_URL = 'https://exercisedb.p.rapidapi.com/exercises/equipment/body%20weight?limit=330';
   const options = {
       method: 'GET',
@@ -61,18 +67,28 @@ document.addEventListener('DOMContentLoaded', function() {
               console.error(error);
       }
   }
+
+  ///This way, when the start button is clicked, it checks if running is false or true and then calls the appropriate function accordingly (startStopwatch() or stopStopwatch()). This will dynamically handle the start and stop functionalities based on the current state of running.
+  startStopbutton.addEventListener("click", function() {
+    if (running === false) {
+      startStopwatch();
+    } else {
+      stopStopwatch();
+    }
+  });
 });
 
-window.onload = function () {
-  loadInitialState();
-};
 
-const loadInitalState = () => {
-  startStopbutton.addEventListener("click", function() {
-    if (!running) {
+function startStopwatch() {
+    if (running === false) {
       startTime = new Date().getTime();
       running = true;
-      startStopbutton.innerHTML = "Pause";
+      startStopbutton.innerHTML = "Stop";
+      startStopbutton.classList.remove("btn-primary");
+      startStopbutton.classList.add("btn-danger");
+      
+
+      //Creates timer/stopwatch interface 
       timer = setInterval(function() {
         let elapsedTime = new Date().getTime() - startTime;
         let hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -94,21 +110,23 @@ const loadInitalState = () => {
         document.getElementById("stopwatch").innerHTML = hours + ":" + minutes + ":" + seconds;
   
         if (elapsedTime >= timeLimit * 60 * 1000) {
+          displayRandomExercise();
           stopStopwatch();
           audio.currentTime = 0;
           audio.play();
-          displayRandomExercise();
+          document.getElementById("stopwatch").innerHTML = "00:00:00";
         }
       }, 1000);
     }
-  });
-}
+  };
 
-
-
+//TODO: edit this so that it RESUMES the time, and doesn't JUST reset/restart at 00:00:00
 function stopStopwatch() {
-  if (running === true) { //this if statement may not be necessary
-    running = false; //this statement was originally at the end of this codeblock
+  if (running === true) { 
+    running = false; 
+    startStopbutton.innerHTML = "Start";
+    startStopbutton.classList.remove("btn-danger");
+      startStopbutton.classList.add("btn-primary");
     let audio = document.getElementById("beep");
     clearInterval(timer);
     audio.pause()
