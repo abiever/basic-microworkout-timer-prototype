@@ -28,7 +28,48 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   }; 
   
-  //first checks if 'exerciseData' is already stored in localStorage, then parses it and sets update time to what was stored in local storage
+  if (localStorage.getItem('exerciseData')) {
+    exerciseData = JSON.parse(localStorage.getItem('exerciseData'));
+    lastUpdateTime = new Date(localStorage.getItem('lastUpdateTime'));
+    console.log(exerciseData);
+    console.log(lastUpdateTime);
+
+    // Check if data needs refresh and trigger the refresh
+    if (shouldRefreshGIFs(lastUpdateTime)) {
+      try {
+        fetch(exerciseDB_URL, options)
+          .then(response => response.json())
+          .then(response => {
+            exerciseData = response;
+            lastUpdateTime = new Date().toISOString();
+            localStorage.setItem('exerciseData', JSON.stringify(exerciseData));
+            localStorage.setItem('lastUpdateTime', lastUpdateTime);
+            console.log(exerciseData);
+            console.log(lastUpdateTime);
+          })
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  } else {
+    try {
+      fetch(exerciseDB_URL, options)
+            .then(response => response.json())
+            .then(response => {
+                exerciseData = response;
+                lastUpdateTime = new Date().toISOString();
+                localStorage.setItem('exerciseData', JSON.stringify(exerciseData));
+                localStorage.setItem('lastUpdateTime', lastUpdateTime); // Save the current time as the last update time for daily gifURL refresh
+                console.log(exerciseData);
+                console.log(lastUpdateTime);
+            })
+    } catch (error) {
+            console.error(error);
+    }
+  }
+
+
+/*   //first checks if 'exerciseData' is already stored in localStorage, then parses it and sets update time to what was stored in local storage
   if (localStorage.getItem('exerciseData')) {
     exerciseData = JSON.parse(localStorage.getItem('exerciseData'));
     lastUpdateTime = localStorage.getItem('lastUpdateTime');
@@ -51,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
               console.error(error);
       }
   //if the API data is already stored, but the GifURLs are expired (12PM Central Time), this checks for expiration then sends another API call to update URLs
-  } else if (localStorage.getItem('exerciseData') || shouldRefreshGIFs(lastUpdateTime)) {
+  } else if (localStorage.getItem('exerciseData') && shouldRefreshGIFs(lastUpdateTime)) {
       try {
         fetch(exerciseDB_URL, options)
               .then(response => response.json())
@@ -66,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } catch (error) {
               console.error(error);
       }
-  }
+  } */
 
   ///This way, when the start button is clicked, it checks if running is false or true and then calls the appropriate function accordingly (startStopwatch() or stopStopwatch()). This will dynamically handle the start and stop functionalities based on the current state of running.
   startStopbutton.addEventListener("click", function() {
@@ -84,7 +125,7 @@ function startStopwatch() {
       startTime = new Date().getTime();
       running = true;
       startStopbutton.innerHTML = "Stop";
-      startStopbutton.classList.remove("btn-primary");
+      startStopbutton.classList.remove("btn-success");
       startStopbutton.classList.add("btn-danger");
       
 
